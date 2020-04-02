@@ -18,8 +18,8 @@ def calculate(points, markers):
     dist_mtrx -= dist_mtrx.min()
     dist_mtrx /= dist_mtrx.max()
 
-    for i in range(N):
-        for j in range(N):
+    for i in range(1, N-1):
+        for j in range(i+1, N):
             conn_mtrx[i][j] = markers[i] == markers[j]
 
     hubert_sum = 0
