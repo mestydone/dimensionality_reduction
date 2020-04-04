@@ -5,16 +5,6 @@ import math
 def init(points):
     return MDS_prepared(points)
 
-def real_dimensionality(distances, epsilon):
-    dim = 0
-    for i in range(len(distances)-1):
-        dim += 1
-        der = distances[i+1] - distances[i]
-        # todo: тут надо что-то придумать с производной
-        if (abs(der) < 1e-2 and abs(distances[i]) <= epsilon or abs(distances[i]) <= epsilon):
-            return dim
-    return dim
-
 class MDS_prepared:    
     def __init__(self, points):
         self.points_transposed = points.transpose((1,0)).copy()

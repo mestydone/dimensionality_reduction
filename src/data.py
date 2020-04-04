@@ -56,3 +56,36 @@ def sort(points, weights):
                 t = points[j].copy()
                 points[j] = points[j+1]
                 points[j+1] = t
+
+def real_dimensionality(loss, epsilon):
+    dim = 0
+    for i in range(len(loss)-1):
+        dim += 1
+        der = loss[i+1] - loss[i]
+        # todo: тут надо что-то придумать с производной
+        if (abs(der) < 1e-2 and abs(loss[i]) <= epsilon or abs(loss[i]) <= epsilon):
+            return dim
+    return dim
+
+
+def filter(points, markers, alpha):
+    points_copy = points.copy()
+    for i in range(len(points_copy)):
+        points_copy[i] -= np.mean(points_copy[i])
+    points_copy /= np.std(points_copy)
+
+    length = len(points[0])
+    dim = len(points)
+    t_points = points.transpose((1,0))
+    t_points_copy = points_copy.transpose((1,0))
+    p_outliers = np.empty((length, dim))
+
+    # todo фильтровать после нормализации
+    for i in range(length):
+        p_outliers[i] = abs(t_points_copy[i]) < alpha
+
+    p_outliers_sum = sum(p_outliers.transpose((1,0)))
+    indices = p_outliers_sum == dim
+
+    return t_points[indices].transpose((1,0)), markers[indices]
+
