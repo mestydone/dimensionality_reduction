@@ -1,5 +1,7 @@
 import struct
 import numpy as np
+from scipy.spatial import distance as scipy_distance
+from sklearn.neighbors import NearestNeighbors
 import math
 
 def load_data(path, take_every, old_format = False):
@@ -89,3 +91,25 @@ def filter(points, markers, alpha):
 
     return t_points[indices].transpose((1,0)), markers[indices]
 
+
+def stress(src_points, proj_points):
+    src_t = src_points.transpose()
+    proj_t = proj_points.transpose()
+
+    src_dist = scipy_distance.cdist(src_t, src_t)
+    proj_dist = scipy_distance.cdist(proj_t, proj_t)
+    dist = np.sqrt(np.power(src_dist - proj_dist, 2)).sum()
+    return dist
+
+
+def points_neighbours(points, n=5):
+    t_points = points.transpose()
+    nbrs = NearestNeighbors(n_neighbors=n+1, algorithm='ball_tree', leaf_size=30).fit(t_points)
+    _, indices = nbrs.kneighbors(t_points)
+
+    indices = indices[:,1:]
+    sets_list = []
+    for idxs in indices:
+        sets_list.append(set(idxs))
+
+    return sets_list

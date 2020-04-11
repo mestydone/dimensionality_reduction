@@ -11,16 +11,16 @@ class MDS_prepared:
         self.points_len = len(self.points_transposed)
         self.src_distances = scipy_distance.cdist(self.points_transposed, self.points_transposed)
 
-    def calculate(self, dim):
-        alpha = 4.7e-5 / self.points_len
-        res_proj, res_dist = self.scale(self.points_transposed[:,:dim], alpha)
+    def calculate(self, dim, alpha=-1, eps=0.01):
+        if (alpha == -1):
+            alpha = 5e-5 / self.points_len
+        res_proj, res_dist = self.scale(self.points_transposed[:,:dim], alpha, eps)
         return res_proj.transpose((1,0)), res_dist
 
-    def scale(self, proj, alpha):
+    def scale(self, proj, alpha, eps):
         counter = 0
         prev_distance = 1e300
         distance = 0
-
         while(counter < 100):
             counter += 1
 
@@ -29,12 +29,13 @@ class MDS_prepared:
             points_distance = proj_distance - self.src_distances
 
             # рассчет разности сумм межточечных расстояний между точками в исходных данных и в проекции
-            distance = np.power(points_distance, 2).sum()
+            distance = np.sqrt(np.power(points_distance, 2)).sum()
+            # distance = np.power(points_distance, 2).sum() # Дальние - дальше, ближние - ближе
 
             if (
                 np.isnan(distance) 
                 or distance == 0 
-                or (prev_distance - distance) / pow(10, math.log10(distance)) < 0.01 # условие остановки
+                or (prev_distance - distance) / pow(10, math.log10(distance)) < eps # условие остановки
                 ):
                 break
 
