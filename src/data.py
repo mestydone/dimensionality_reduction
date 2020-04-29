@@ -45,9 +45,34 @@ def load_data(path, take_every, old_format = False):
 
 
 def load_noise(length, dim):
-    points = np.random.rand(dim,length)
-    markers = np.zeros(length)
+    points = np.random.uniform(0, 1, (dim,length))
+
+    dim1_len = math.floor(length / 2)
+    dim2_len = length - dim1_len
+    markers = np.append(np.zeros(dim1_len), np.ones(dim2_len))
+
     return (points, markers)
+
+
+def load_compact_clusters(length, dim, alpha=1):
+    points = np.zeros((dim, length))
+
+    dim1_len = math.floor(length / 2)
+    dim2_len = length - dim1_len
+
+    def generate_features():
+        f1 = np.random.uniform(0,1,dim1_len) * alpha + np.random.random() * 10
+        f2 = np.random.uniform(0,1,dim2_len) * alpha + np.random.random() * 10
+        return np.append(f1,f2)
+
+    for d in range(dim):
+        points[d] = generate_features()
+
+    markers = np.append(np.zeros(dim1_len), np.ones(dim2_len))
+    return (points, markers)
+
+
+
 
 
 def sort(points, weights):
