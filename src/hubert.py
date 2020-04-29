@@ -22,6 +22,9 @@ def calculate(points, markers):
     t_points = points.transpose((1,0))
     dist_mtrx = distance.cdist(t_points, t_points)
 
+    # normalize dist matrix
+    dist_mtrx = dist_mtrx / np.max(dist_mtrx)
+
     # make connectivity matrix
     conn_mtrx = np.zeros((N,N))
     for i in range(0, N-1):
