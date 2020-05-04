@@ -8,24 +8,29 @@ import numpy as np
 # clustering.fit(source_data.transpose((1,0)))
 # clustering.labels_
 
-# def get_norm_std(points):
-#     for i in range(len(points)):
-#         points[i] -= np.mean(points[i])
-#     return np.std(points)
+# def get_variance(matrix, mean):
+#     N = len(matrix)
+#     M = N * (N-1) / 2
+#     mean_quad = mean*mean
+#     var = 0
+
+#     for i in range(N-1):
+#         for j in range(i+1, N):
+#             var += pow(matrix[i][j], 2) - mean_quad
+
+#     return var / M
+
 
 
 # Modified Hubert Г statistic
 def calculate(points, markers):
     N = points.shape[1]
 
-    # make distance matrix
+    # create distance matrix
     t_points = points.transpose((1,0))
     dist_mtrx = distance.cdist(t_points, t_points)
 
-    # normalize dist matrix
-    dist_mtrx = dist_mtrx / np.max(dist_mtrx)
-
-    # make connectivity matrix
+    # create connectivity matrix
     conn_mtrx = np.zeros((N,N))
     for i in range(0, N-1):
         for j in range(i+1, N):
@@ -36,10 +41,20 @@ def calculate(points, markers):
     
     return hubert_sum / M
 
-# Normalized Hubert Г statistic
+# среднее от верхнего треугольника
+def get_mean(matrix):
+    N = len(matrix)
+    M = N * (N-1) / 2
+    mean = 0
+
+    for i in range(N-1):
+        for j in range(i+1, N):
+            mean += matrix[i][j]
+
+    return mean / M
+
 def calculate_norm(points, markers):
     N = points.shape[1]
-
     # create distance matrix
     t_points = points.transpose((1,0))
     dist_mtrx = distance.cdist(t_points, t_points)
@@ -51,8 +66,11 @@ def calculate_norm(points, markers):
             conn_mtrx[i][j] = markers[i] != markers[j]
 
     # normalize matrices
-    dist_mtrx_mean = (dist_mtrx - np.mean(dist_mtrx))
-    conn_mtrx_mean = (conn_mtrx - np.mean(conn_mtrx))
+    dist_mean = get_mean(dist_mtrx)
+    conn_mean = get_mean(conn_mtrx)
+
+    dist_mtrx_mean = (dist_mtrx - dist_mean)
+    conn_mtrx_mean = (conn_mtrx - conn_mean)
 
     hubert_sum = 0
     sum_mtrx = dist_mtrx_mean * conn_mtrx_mean
@@ -60,9 +78,8 @@ def calculate_norm(points, markers):
         for j in range(i+1, N):
             hubert_sum += sum_mtrx[i][j]
 
-    std_dist = np.std(dist_mtrx_mean)
-    std_conn = np.std(conn_mtrx_mean)
+    std_dist = np.std(dist_mtrx)
+    std_conn = np.std(conn_mtrx)
     M =  (N * (N-1) / 2)   
-      
     
-    return abs(1/M * hubert_sum) / (std_dist * std_conn)
+    return hubert_sum / (M * std_dist * std_conn)
