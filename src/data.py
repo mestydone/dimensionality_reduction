@@ -7,11 +7,11 @@ import math
 def load_data(path, take_every, old_format = False):
     with open(path, "rb") as f:
         if old_format:
-            dim = struct.unpack('=i', f.read(4))[0] # размерность
-            count = struct.unpack('=i', f.read(4))[0] # количество точек
+            dim = struct.unpack('=i', f.read(4))[0] # data dimensionality
+            count = struct.unpack('=i', f.read(4))[0] # points count
         else:
-            count = struct.unpack('=i', f.read(4))[0] # количество точек
-            dim = struct.unpack('=i', f.read(4))[0] # размерность
+            count = struct.unpack('=i', f.read(4))[0] # points count
+            dim = struct.unpack('=i', f.read(4))[0] # data dimensionality
 
         print('file dim:', dim)
         print('file len:', count)
@@ -89,7 +89,6 @@ def real_dimensionality(loss, epsilon):
     for i in range(len(loss)-1):
         dim += 1
         der = loss[i+1] - loss[i]
-        # todo: тут надо что-то придумать с производной
         if (abs(der) < 1e-2 and abs(loss[i]) <= epsilon or abs(loss[i]) <= epsilon):
             return dim
     return dim
@@ -107,7 +106,6 @@ def filter(points, markers, alpha):
     t_points_copy = points_copy.transpose((1,0))
     p_outliers = np.empty((length, dim))
 
-    # todo фильтровать после нормализации
     for i in range(length):
         p_outliers[i] = abs(t_points_copy[i]) < alpha
 

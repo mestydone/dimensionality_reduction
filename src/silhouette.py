@@ -20,7 +20,7 @@ def calculate(points, markers):
     sil = 0
     for i in range(N):
         a = dist_mtrx_same[i].sum() / len(dist_mtrx_same[dist_mtrx_same != 0]) / N
-        b = dist_mtrx_other[i].sum() / len(dist_mtrx_other[dist_mtrx_other != 0]) / N # тут нет минимума, потому что у меня кластера всего 2
+        b = dist_mtrx_other[i].sum() / len(dist_mtrx_other[dist_mtrx_other != 0]) / N # without min() cause there are only 2 clusters
         
         sil += (b - a) / max(a, b)
 

@@ -2,24 +2,17 @@ from scipy.spatial import distance
 import math
 import numpy as np
 
-# Если определять кластеры самому
-# from sklearn.cluster import AgglomerativeClustering
-# clustering = AgglomerativeClustering(linkage='average')
-# clustering.fit(source_data.transpose((1,0)))
-# clustering.labels_
-
 # def get_variance(matrix, mean):
 #     N = len(matrix)
 #     M = N * (N-1) / 2
 #     mean_quad = mean*mean
 #     var = 0
-
+#
 #     for i in range(N-1):
 #         for j in range(i+1, N):
 #             var += pow(matrix[i][j], 2) - mean_quad
-
+#
 #     return var / M
-
 
 
 # Modified Hubert Г statistic
@@ -41,7 +34,7 @@ def calculate(points, markers):
     
     return hubert_sum / M
 
-# среднее от верхнего треугольника
+# mean of top triangle
 def get_mean(matrix):
     N = len(matrix)
     M = N * (N-1) / 2
@@ -56,15 +49,8 @@ def get_mean(matrix):
 def calculate_norm(points, markers):
     N = points.shape[1]
 
-    # Нормализация исходных данных
-    real_norm_points = points.copy()
-    # for i in range(len(points)):
-    #     real_norm_points[i] -= np.mean(real_norm_points[i])
-    # real_norm_points /= np.std(real_norm_points)
-
-
     # create distance matrix
-    t_points = real_norm_points.transpose((1,0))
+    t_points = points.transpose((1,0))
     dist_mtrx = distance.cdist(t_points, t_points)
 
     # create connectivity matrix

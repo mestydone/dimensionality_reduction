@@ -7,7 +7,7 @@ def calculate(points):
     pca_points = np.dot(e_vecs.transpose((1,0)), points)
     return (pca_points, relative_error(pca_points, e_vals))
 
-# Отношение остаточной дисперсии к объясненной 
+# Ratio of residual variance to explained
 def relative_error(points, e_vals):
     pca_error = []
     for i in range(len(points)):

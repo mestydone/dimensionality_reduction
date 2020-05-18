@@ -22,7 +22,7 @@ def _generate_points(length, dim):
     a = math.sqrt(3)
     return np.random.uniform(-a, a, (length,dim)).reshape(dim,-1)
 
-# сумма растояний от каждой точки до ее ближайшего соседа
+# calculates and return sum of distances to nearest neighbour for all points
 def _distance(points):
     t_points = points.transpose((1,0))
     nbrs = NearestNeighbors(n_neighbors=2, algorithm='ball_tree').fit(t_points)
@@ -33,20 +33,19 @@ def calculate(points):
     length = len(points[0])
     dim = len(points)
 
-    # Нормализация исходных данных
+    # Normalization
     real_norm_points = points.copy()
     for i in range(len(points)):
         real_norm_points[i] -= np.mean(real_norm_points[i])
     real_norm_points /= np.std(real_norm_points)
 
-    #Генерация случайных данных
+    # Generates random dataset
     generated_points = _generate_points(length, dim)
 
-    # Считаем расстояния в исходных и сгенерированных
+    # Calculate sum of distances
     dist_real = _distance(real_norm_points)
     dist_generated = _distance(generated_points)
     
-    # Вывод информации о данных
     # _info(real_norm_points, generated_points, dist_real, dist_generated)
 
     return dist_generated / (dist_real + dist_generated)
