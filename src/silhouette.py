@@ -14,14 +14,13 @@ def calculate(points, markers):
         for j in range(N):
             conn_mtrx[i][j] = markers[i] == markers[j]
 
-    # mean distance in one cluster
-    dist_mtrx_same = dist_mtrx * conn_mtrx
-    dist_mtrx_other = dist_mtrx * (conn_mtrx == 0)
+    dist_mtrx_same = dist_mtrx * conn_mtrx  # in same cluster
+    dist_mtrx_other = dist_mtrx * (conn_mtrx == 0) # in different clusters
 
     sil = 0
     for i in range(N):
         a = dist_mtrx_same[i].sum() / len(dist_mtrx_same[dist_mtrx_same != 0]) / N
-        b = dist_mtrx_other[i].sum() / len(dist_mtrx_other[dist_mtrx_other != 0]) / N
+        b = dist_mtrx_other[i].sum() / len(dist_mtrx_other[dist_mtrx_other != 0]) / N # тут нет минимума, потому что у меня кластера всего 2
         
         sil += (b - a) / max(a, b)
 

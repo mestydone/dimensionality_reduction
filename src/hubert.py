@@ -55,8 +55,16 @@ def get_mean(matrix):
 
 def calculate_norm(points, markers):
     N = points.shape[1]
+
+    # Нормализация исходных данных
+    real_norm_points = points.copy()
+    # for i in range(len(points)):
+    #     real_norm_points[i] -= np.mean(real_norm_points[i])
+    # real_norm_points /= np.std(real_norm_points)
+
+
     # create distance matrix
-    t_points = points.transpose((1,0))
+    t_points = real_norm_points.transpose((1,0))
     dist_mtrx = distance.cdist(t_points, t_points)
 
     # create connectivity matrix
