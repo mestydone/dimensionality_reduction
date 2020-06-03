@@ -61,7 +61,7 @@ def load_compact_clusters(length, dim, alpha=1):
     dim2_len = length - dim1_len
 
     def generate_features():
-        f1 = np.random.uniform(0,1,dim1_len) * alpha + np.random.random() * 10
+        f1 = np.random.uniform(0,1,dim1_len) * alpha + np.random.random() * 10 
         f2 = np.random.uniform(0,1,dim2_len) * alpha + np.random.random() * 10
         return np.append(f1,f2)
 
@@ -84,14 +84,21 @@ def sort(points, weights):
                 points[j] = points[j+1]
                 points[j+1] = t
 
-def real_dimensionality(loss, epsilon):
-    dim = 0
-    for i in range(len(loss)-1):
-        dim += 1
-        der = loss[i+1] - loss[i]
-        if (abs(der) < 1e-2 and abs(loss[i]) <= epsilon or abs(loss[i]) <= epsilon):
-            return dim
-    return dim
+def real_dimensionality(loss, epsilon=0.1):
+    length = len(loss)
+    est = np.empty(length)
+    maxVal = max(loss)
+    est[0] = 1#abs(loss[1] - 2*loss[0]) # first todo !!!!
+    est[length-1] = 1#abs(-2*loss[length-1] + loss[length-2]) # last
+
+    for i in range(1, length-1):
+        est[i] = abs(loss[i-1] - loss[i+1]) / maxVal
+        
+    for i in range(length):
+        if est[i] < epsilon:
+            return i+1
+
+    return length
 
 
 def filter(points, markers, alpha):
